@@ -9,6 +9,9 @@ using System.Collections;
 
 namespace Winwink.DesktopWallPaper
 {
+    /// <summary>
+    /// Visit bing.com to get picture uri and picture name
+    /// </summary>
     public class BingPicture
     {
         /// <summary>
@@ -28,8 +31,9 @@ namespace Winwink.DesktopWallPaper
             WebResponse response = request.GetResponse();
             StreamReader reader = new StreamReader(response.GetResponseStream(), Encoding.GetEncoding("gb2312"));
             var webContent = reader.ReadToEnd();
+            SaveContent(webContent);
             var url = GetPictureUrl(webContent);
-            var name = GetPictureName(url);
+            var name = GetPictureName(webContent, url);
 
             //PictureUrl = siteUrl +　url;
             PictureUrl = url;
@@ -64,39 +68,55 @@ namespace Winwink.DesktopWallPaper
         private string GetPictureUrl(string content)
         {
             var url = "";
-            MatchCollection TitleMatchs = Regex.Matches(content, "href=\\\"(/th\\?id=[^\"]+)\\\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
-            foreach (Match NextMatch in TitleMatchs)
+            MatchCollection titleMatchs = Regex.Matches(content, "href=\\\"(/th\\?id=[^\"]+)\\\"", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            foreach (Match nextMatch in titleMatchs)
             {
-                url = NextMatch.Groups[1].Value;
+                url = nextMatch.Groups[1].Value;
             }
             url = "https://s.cn.bing.net" + url;
             return url;
         }
 
+        private static void SaveContent(string content)
+        {
+            var dir = Path.Combine(Environment.CurrentDirectory, "UrlContent");
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            var filePath = Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + ".txt");
+            File.WriteAllText(filePath, content);
+        }
+
         /// <summary>
         /// 
         /// </summary>
+        /// <param name="content">eg. _H.imgName = "FujiSakura";</param>
         /// <param name="url">eg. https://s.cn.bing.net/th?id=OHR.BagpipeOpera_ZH-CN9506207351_1920x1080.jpg&rf=NorthMale_1920x1080.jpg&pid=hp </param>
         /// <returns></returns>
-        private string GetPictureName(string url)
+        private string GetPictureName(string content, string url)
         {
             url = url.Replace("&amp;", "&");
-             var value = GetParamValue(url, "rf");
-            return value;
+            var value = GetParamValue(url, "id");
+            var name = value;
+            MatchCollection matches = Regex.Matches(content, "_H\\.imgName = \"([^\"]+)\"; ", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            foreach (Match nextMatch in matches)
+            {
+                name = nextMatch.Groups[1].Value;
+            }
+
+            return name;
         }
 
         private string GetParamValue(string url, string key)
         {
             var list = url.Split(new string[] { "&", "?" }, StringSplitOptions.RemoveEmptyEntries);
             Hashtable map = new Hashtable();
-            foreach(string keyValueStr in list)
+            foreach (string keyValueStr in list)
             {
-                var splist = keyValueStr.Split(new string[] { "=" }, StringSplitOptions.None);
-                if(splist.Length>=2)
+                var splits = keyValueStr.Split(new string[] { "=" }, StringSplitOptions.None);
+                if (splits.Length >= 2)
                 {
-                    if(key==splist[0])
+                    if (key == splits[0])
                     {
-                        return splist[1];
+                        return splits[1];
                     }
                 }
             }

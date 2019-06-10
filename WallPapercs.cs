@@ -8,6 +8,9 @@ using System.IO;
 
 namespace Winwink.DesktopWallPaper
 {
+    /// <summary>
+    /// Download Picture and set as wallpaper
+    /// </summary>
     public sealed class Wallpaper
     {
         Wallpaper() { }
@@ -108,7 +111,4 @@ namespace Winwink.DesktopWallPaper
         }
 
     }
-
-
-
 }
