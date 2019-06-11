@@ -37,7 +37,7 @@ namespace Winwink.DesktopWallPaper
                 bing.GetPictureOfToday();
 
                 Wallpaper.Set(new Uri(bing.PictureUrl), Wallpaper.Style.Fill, bing.PictureName);
-                ShowMessage("Done", 2000);
+                ShowMessage("Done", GetHowlongtoClose());
             }
             catch (Exception ex)
             {
@@ -79,6 +79,16 @@ namespace Winwink.DesktopWallPaper
                 timer.Stop();
                 this.Invoke(new Action(() => Environment.Exit(0)));
             }
+        }
+
+        private int GetHowlongtoClose()
+        {
+            var str = System.Configuration.ConfigurationManager.AppSettings["HowLongToClose"];
+            if (!int.TryParse(str, out var value))
+            {
+                value = 2;
+            }
+            return value * 1000;
         }
     }
 }

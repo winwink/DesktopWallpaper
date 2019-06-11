@@ -22,8 +22,6 @@ namespace Winwink.DesktopWallPaper
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         static extern int SystemParametersInfo(int uAction, int uParam, string lpvParam, int fuWinIni);
 
-        public static string SaveFolder = @"D:\My\今日美图";
-
         public enum Style : int
         {
             Fill,
@@ -88,7 +86,12 @@ namespace Winwink.DesktopWallPaper
 
         private static string GetWallpaperPath()
         {
-            string folder = SaveFolder;
+            var folder = System.Configuration.ConfigurationManager.AppSettings["PictureSaveFolder"];
+            if (string.IsNullOrEmpty(folder))
+            {
+                folder = @"D:\My\今日美图";
+            }
+
             if (!Directory.Exists(folder))
             {
                 Directory.CreateDirectory(folder);
