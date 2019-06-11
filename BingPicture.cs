@@ -96,7 +96,7 @@ namespace Winwink.DesktopWallPaper
             url = url.Replace("&amp;", "&");
             var value = GetParamValue(url, "id");
             var name = value;
-            MatchCollection matches = Regex.Matches(content, "_H\\.imgName = \"([^\"]+)\"; ", RegexOptions.IgnoreCase | RegexOptions.Multiline);
+            MatchCollection matches = Regex.Matches(content, "_H.imgName = \"([^\"]+)\";", RegexOptions.IgnoreCase | RegexOptions.Multiline);
             foreach (Match nextMatch in matches)
             {
                 name = nextMatch.Groups[1].Value;
