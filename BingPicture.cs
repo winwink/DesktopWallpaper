@@ -79,7 +79,7 @@ namespace Winwink.DesktopWallPaper
 
         private static void SaveContent(string content)
         {
-            var dir = Path.Combine(Environment.CurrentDirectory, "UrlContent");
+            var dir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "UrlContent");
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
             var filePath = Path.Combine(dir, DateTime.Now.ToString("yyyyMMdd") + ".txt");
             File.WriteAllText(filePath, content);
