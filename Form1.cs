@@ -42,6 +42,7 @@ namespace Winwink.DesktopWallPaper
             catch (Exception ex)
             {
                 LblMessage.Text = "Error:\r\n" + ex.Message+"\r\n"+ex.StackTrace;
+                LogWriter.Write("", ex.Message + "\r\n" + ex.StackTrace);
             }
         }
 
